@@ -107,7 +107,7 @@ export function TransactionCard({
     return (
       <Card
         className={
-          transaction.isExcluded ? 'opacity-50 bg-muted/30' : ''
+          transaction.isExcluded ? 'text-muted-foreground' : ''
         }
       >
         <CardContent className="p-3">
@@ -243,7 +243,7 @@ export function TransactionCard({
   return (
     <Card
       className={
-        transaction.isExcluded ? 'opacity-50 bg-muted/30' : ''
+        transaction.isExcluded ? 'text-muted-foreground' : ''
       }
     >
       <CardContent className="p-3 space-y-3">

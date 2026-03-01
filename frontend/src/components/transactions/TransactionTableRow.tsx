@@ -145,7 +145,7 @@ export function TransactionTableRow({
     <TableRow
       className={cn(
         '[&>td]:min-h-[3.25rem]', // Cells control row height; tr min-height is unreliable
-        transaction.isExcluded && 'opacity-50 bg-muted/30',
+        transaction.isExcluded && 'text-muted-foreground',
       )}
     >
       <TableCell className="min-w-[100px] w-[100px]">
