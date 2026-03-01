@@ -34,6 +34,7 @@ import { cn } from '@/lib/utils';
 import { formatCurrency } from '@/lib/transaction-utils';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { CalendarRange } from 'lucide-react';
 import type { ChartCategory } from '@/hooks/useDashboardData';
 
 type SpendingChartCardProps = {
@@ -223,20 +224,39 @@ export function SpendingChartCard({
         </div>
 
         <div className="mt-16 space-y-3 min-w-0 overflow-visible">
-          <div className="flex gap-1">
-            {(['bar', 'pie'] as const).map((type) => (
-              <Button
-                key={type}
-                variant={chartType === type ? 'secondary' : 'ghost'}
-                size="sm"
-                className="capitalize"
-                onClick={() => handleChartTypeChange(type)}
-              >
-                {type}
-              </Button>
-            ))}
-          </div>
-          <ChartContainer
+          {variableTotal === 0 ? (
+            <div
+              className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 py-12 px-6 text-center"
+              aria-hidden
+            >
+              <CalendarRange
+                className="h-12 w-12 text-muted-foreground/60"
+                strokeWidth={1.25}
+              />
+              <p className="mt-3 text-sm font-medium text-foreground">
+                No spending yet this month
+              </p>
+              <p className="mt-1 max-w-[260px] text-sm text-muted-foreground">
+                Your budgets are ready. When you add transactions, your chart
+                will show up here.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="flex gap-1">
+                {(['bar', 'pie'] as const).map((type) => (
+                  <Button
+                    key={type}
+                    variant={chartType === type ? 'secondary' : 'ghost'}
+                    size="sm"
+                    className="capitalize"
+                    onClick={() => handleChartTypeChange(type)}
+                  >
+                    {type}
+                  </Button>
+                ))}
+              </div>
+              <ChartContainer
             config={
               chartType === 'bar' ? chartConfig : pieChartConfig
             }
@@ -432,7 +452,7 @@ export function SpendingChartCard({
               </PieChart>
             )}
           </ChartContainer>
-          {chartType === 'pie' &&
+            {chartType === 'pie' &&
             pieActiveIndex !== undefined &&
             pieData[pieActiveIndex] && (
               <PieSelectedSliceSummary
@@ -445,6 +465,8 @@ export function SpendingChartCard({
                 }
               />
             )}
+            </>
+          )}
         </div>
       </CardContent>
     </Card>
