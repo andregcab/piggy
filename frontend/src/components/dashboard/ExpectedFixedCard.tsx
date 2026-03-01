@@ -345,19 +345,34 @@ export function ExpectedFixedCard({
         <div className="space-y-1.5">
           {filterAndSortFixedCategories(fixedCategories).map(
             (category) => {
-              const expectedItem = expectedByCategoryId[category.id];
-              const hasExpected = expectedItem && category.budget > 0;
               const actual = category.total;
               const expectedAmount = category.budget;
-              const showExpectedDiff =
+              const hasExpected = expectedAmount > 0;
+              const isOver = category.over;
+              const isUnder =
                 hasExpected &&
+                actual < expectedAmount &&
                 Math.abs(actual - expectedAmount) > 0.01;
+              const showVsExpected =
+                hasExpected && Math.abs(actual - expectedAmount) > 0.01;
+              const overageAmount = isOver
+                ? actual - expectedAmount
+                : 0;
+              const underAmount = isUnder
+                ? expectedAmount - actual
+                : 0;
               return (
                 <div
                   key={category.id}
                   className="group flex items-center justify-between text-sm"
                 >
-                  <span className="text-muted-foreground">
+                  <span
+                    className={
+                      isOver
+                        ? 'font-medium text-destructive'
+                        : 'text-muted-foreground'
+                    }
+                  >
                     {category.name}
                   </span>
                   <span className="flex items-center gap-2">
@@ -378,11 +393,23 @@ export function ExpectedFixedCard({
                         <Pencil className="h-3 w-3" aria-hidden />
                       </Button>
                     </span>
-                    {formatCurrency(category.total)}
-                    {showExpectedDiff && (
-                      <span className="text-muted-foreground text-xs">
-                        (expected {formatCurrency(expectedAmount)})
-                      </span>
+                    {formatCurrency(actual)}
+                    {showVsExpected && (
+                      <>
+                        <span className="text-muted-foreground">
+                          / {formatCurrency(expectedAmount)}
+                        </span>
+                        {isOver && (
+                          <span className="font-medium text-destructive">
+                            Over by {formatCurrency(overageAmount)}
+                          </span>
+                        )}
+                        {isUnder && (
+                          <span className="text-[var(--positive)]">
+                            Under by {formatCurrency(underAmount)}
+                          </span>
+                        )}
+                      </>
                     )}
                   </span>
                 </div>
