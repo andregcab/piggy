@@ -30,12 +30,15 @@ function ThemeToggle() {
   );
 }
 
-const nav = [
+// Primary: core workflow (most used). Secondary: setup/admin (less frequent).
+const navPrimary = [
   { to: '/', label: 'Dashboard' },
-  { to: '/accounts', label: 'Accounts' },
   { to: '/transactions', label: 'Transactions' },
-  { to: '/import', label: 'Import' },
   { to: '/categories', label: 'Categories' },
+];
+const navSecondary = [
+  { to: '/import', label: 'Import' },
+  { to: '/accounts', label: 'Accounts' },
   { to: '/settings', label: 'Settings' },
 ];
 
@@ -96,43 +99,85 @@ export function Layout() {
           </div>
         </div>
         {mobileMenuOpen && (
-          <nav className="flex flex-col border-t border-border px-4 py-3 md:hidden">
-            {nav.map(({ to, label }) => (
-              <Link
-                key={to}
-                to={to}
-                onClick={() => setMobileMenuOpen(false)}
-                className={cn(
-                  'rounded-md px-3 py-2 text-sm font-medium transition-colors',
-                  location.pathname === to
-                    ? 'border border-primary/55 bg-primary/35 text-primary-foreground hover:bg-primary/45'
-                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
-                )}
-              >
-                {label}
-              </Link>
-            ))}
+          <nav className="flex flex-col border-t border-border px-4 py-3 md:hidden" aria-label="Main">
+            <div className="flex flex-col gap-1">
+              {navPrimary.map(({ to, label }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    'rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                    location.pathname === to
+                      ? 'border border-primary/55 bg-primary/35 text-primary-foreground hover:bg-primary/45'
+                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+                  )}
+                >
+                  {label}
+                </Link>
+              ))}
+            </div>
+            <div className="my-2 border-t border-border" role="presentation" />
+            <div className="flex flex-col gap-1">
+              {navSecondary.map(({ to, label }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    'rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                    location.pathname === to
+                      ? 'border border-primary/55 bg-primary/35 text-primary-foreground hover:bg-primary/45'
+                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+                  )}
+                >
+                  {label}
+                </Link>
+              ))}
+            </div>
           </nav>
         )}
       </header>
       <nav
-        className="sticky top-0 z-20 shrink-0 border-b border-border bg-card px-4 py-2 shadow-[0_1px_0_0_var(--border)] text-card-foreground hidden md:flex flex-wrap gap-2"
+        className="sticky top-0 z-20 shrink-0 border-b border-border bg-card px-4 py-2 shadow-[0_1px_0_0_var(--border)] text-card-foreground hidden md:flex flex-wrap items-center gap-2"
         aria-label="Main"
       >
-        {nav.map(({ to, label }) => (
-          <Link
-            key={to}
-            to={to}
-            className={cn(
-              'rounded-md px-3 py-2 text-sm font-medium transition-colors',
-              location.pathname === to
-                ? 'border border-primary/55 bg-primary/35 text-primary-foreground hover:bg-primary/45'
-                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
-            )}
-          >
-            {label}
-          </Link>
-        ))}
+        <div className="flex flex-wrap gap-2">
+          {navPrimary.map(({ to, label }) => (
+            <Link
+              key={to}
+              to={to}
+              className={cn(
+                'rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                location.pathname === to
+                  ? 'border border-primary/55 bg-primary/35 text-primary-foreground hover:bg-primary/45'
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+              )}
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
+        <span
+          className="h-5 w-px shrink-0 bg-border"
+          aria-hidden
+        />
+        <div className="flex flex-wrap gap-2">
+          {navSecondary.map(({ to, label }) => (
+            <Link
+              key={to}
+              to={to}
+              className={cn(
+                'rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                location.pathname === to
+                  ? 'border border-primary/55 bg-primary/35 text-primary-foreground hover:bg-primary/45'
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+              )}
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
       </nav>
       <main id="main" className="flex-1 min-w-0 overflow-x-hidden pt-4 px-3 pb-3 sm:pt-5 sm:px-4 sm:pb-4 text-foreground">
         <GettingStartedCard />
