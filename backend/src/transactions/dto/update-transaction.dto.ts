@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsIn,
   IsNumber,
   IsOptional,
   IsString,
@@ -29,12 +30,16 @@ export class UpdateTransactionDto {
   @IsOptional()
   isExcluded?: boolean;
 
+  @IsIn(['debit', 'credit'])
+  @IsOptional()
+  type?: 'debit' | 'credit';
+
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
   amount?: number;
 
-  @ValidateIf((o) => o.myShare != null)
+  @ValidateIf((o: UpdateTransactionDto) => o.myShare != null)
   @IsNumber()
   @Min(0.01, { message: 'My share must be greater than 0' })
   @IsOptional()

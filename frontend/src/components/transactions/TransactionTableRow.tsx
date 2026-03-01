@@ -33,6 +33,7 @@ type UpdateMutation = UseMutationResult<
       categoryId?: string | null;
       notes?: string | null;
       isExcluded?: boolean;
+      type?: 'debit' | 'credit';
       amount?: number;
       myShare?: number | null;
     };
@@ -49,11 +50,13 @@ type TransactionTableRowProps = {
   editDate: string;
   editDescription: string;
   editAmount: string;
+  editType: 'debit' | 'credit';
   editCategoryId: string | null;
   editNotes: string;
   onEditDateChange: (v: string) => void;
   onEditDescriptionChange: (v: string) => void;
   onEditAmountChange: (v: string) => void;
+  onEditTypeChange: (v: 'debit' | 'credit') => void;
   onEditCategoryIdChange: (v: string | null) => void;
   onEditNotesChange: (v: string) => void;
   onEditSave: (e: React.FormEvent) => void;
@@ -100,11 +103,13 @@ export function TransactionTableRow({
   editDate,
   editDescription,
   editAmount,
+  editType,
   editCategoryId,
   editNotes,
   onEditDateChange,
   onEditDescriptionChange,
   onEditAmountChange,
+  onEditTypeChange,
   onEditCategoryIdChange,
   onEditNotesChange,
   onEditSave,
@@ -156,7 +161,7 @@ export function TransactionTableRow({
       </TableCell>
       <TableCell
         className={cn(
-          'max-w-[220px] min-w-0',
+          'min-w-0 max-w-[220px] overflow-hidden',
           !isEditing && 'truncate',
         )}
         title={!isEditing ? transaction.description : undefined}
@@ -165,25 +170,62 @@ export function TransactionTableRow({
           <Input
             value={editDescription}
             onChange={(e) => onEditDescriptionChange(e.target.value)}
-            className="h-8 w-full min-w-0 text-sm pl-2 -ml-2"
+            className="h-8 w-full min-w-0 max-w-full text-sm pl-2 -ml-2 overflow-hidden text-ellipsis"
             form={`edit-tx-form-${transaction.id}`}
+            title={editDescription}
           />
         ) : (
           transaction.description
         )}
       </TableCell>
-      <TableCell className="min-w-[5rem] w-24 text-right font-mono align-middle whitespace-nowrap">
+      <TableCell className="min-w-[8.5rem] w-[8.5rem] shrink-0 text-right font-mono align-middle whitespace-nowrap">
         {isEditing ? (
-          <div className="flex justify-end">
+          <div className="flex items-center justify-end gap-3">
             <Input
               type="number"
               step="0.01"
               min="0.01"
               value={editAmount}
               onChange={(e) => onEditAmountChange(e.target.value)}
-              className="h-8 w-24 text-right pl-2 pr-2 -mr-2"
+              className="h-8 w-20 min-w-0 text-right pl-2 pr-2 -mr-2 font-mono tabular-nums"
               form={`edit-tx-form-${transaction.id}`}
             />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-7 min-w-0 px-2 text-xs rounded font-mono shrink-0 border-input bg-muted/30"
+              onClick={() =>
+                onEditTypeChange(editType === 'debit' ? 'credit' : 'debit')
+              }
+              title={
+                editType === 'debit'
+                  ? 'Expense — click to switch to Income'
+                  : 'Income — click to switch to Expense'
+              }
+              aria-pressed={editType === 'debit'}
+              aria-label={`Type: ${editType === 'debit' ? 'Expense' : 'Income'}. Click to toggle.`}
+            >
+              <span
+                className={
+                  editType === 'debit'
+                    ? 'text-primary font-semibold'
+                    : 'text-muted-foreground'
+                }
+              >
+                −
+              </span>
+              <span className="text-muted-foreground/60">/</span>
+              <span
+                className={
+                  editType === 'credit'
+                    ? 'text-primary font-semibold'
+                    : 'text-muted-foreground'
+                }
+              >
+                +
+              </span>
+            </Button>
           </div>
         ) : (
           <span

@@ -31,6 +31,7 @@ export async function updateTransaction(
     categoryId?: string | null;
     notes?: string | null;
     isExcluded?: boolean;
+    type?: 'debit' | 'credit';
     amount?: number;
     myShare?: number | null;
   },

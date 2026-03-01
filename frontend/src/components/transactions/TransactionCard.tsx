@@ -32,6 +32,7 @@ type UpdateMutation = UseMutationResult<
       categoryId?: string | null;
       notes?: string | null;
       isExcluded?: boolean;
+      type?: 'debit' | 'credit';
       amount?: number;
       myShare?: number | null;
     };
@@ -48,11 +49,13 @@ type TransactionCardProps = {
   editDate: string;
   editDescription: string;
   editAmount: string;
+  editType: 'debit' | 'credit';
   editCategoryId: string | null;
   editNotes: string;
   onEditDateChange: (v: string) => void;
   onEditDescriptionChange: (v: string) => void;
   onEditAmountChange: (v: string) => void;
+  onEditTypeChange: (v: 'debit' | 'credit') => void;
   onEditCategoryIdChange: (v: string | null) => void;
   onEditNotesChange: (v: string) => void;
   onEditSave: (e: React.FormEvent) => void;
@@ -69,11 +72,13 @@ export function TransactionCard({
   editDate,
   editDescription,
   editAmount,
+  editType,
   editCategoryId,
   editNotes,
   onEditDateChange,
   onEditDescriptionChange,
   onEditAmountChange,
+  onEditTypeChange,
   onEditCategoryIdChange,
   onEditNotesChange,
   onEditSave,
@@ -140,15 +145,53 @@ export function TransactionCard({
               <Label htmlFor={`tx-amount-${transaction.id}`}>
                 Amount
               </Label>
-              <Input
-                id={`tx-amount-${transaction.id}`}
-                type="number"
-                step="0.01"
-                min="0.01"
-                value={editAmount}
-                onChange={(e) => onEditAmountChange(e.target.value)}
-                className="h-8 w-24"
-              />
+              <div className="flex items-center gap-3">
+                <Input
+                  id={`tx-amount-${transaction.id}`}
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  value={editAmount}
+                  onChange={(e) => onEditAmountChange(e.target.value)}
+                  className="h-8 w-24"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-8 min-w-0 px-2.5 text-xs rounded font-mono border-input bg-muted/30"
+                  onClick={() =>
+                    onEditTypeChange(editType === 'debit' ? 'credit' : 'debit')
+                  }
+                  title={
+                    editType === 'debit'
+                      ? 'Expense — click to switch to Income'
+                      : 'Income — click to switch to Expense'
+                  }
+                  aria-pressed={editType === 'debit'}
+                  aria-label={`Type: ${editType === 'debit' ? 'Expense' : 'Income'}. Click to toggle.`}
+                >
+                  <span
+                    className={
+                      editType === 'debit'
+                        ? 'text-primary font-semibold'
+                        : 'text-muted-foreground'
+                    }
+                  >
+                    −
+                  </span>
+                  <span className="text-muted-foreground/60">/</span>
+                  <span
+                    className={
+                      editType === 'credit'
+                        ? 'text-primary font-semibold'
+                        : 'text-muted-foreground'
+                    }
+                  >
+                    +
+                  </span>
+                </Button>
+              </div>
             </div>
             <div className="grid gap-2">
               <Label>Category</Label>

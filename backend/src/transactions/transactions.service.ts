@@ -232,10 +232,23 @@ export class TransactionsService {
     }
     if (dto.notes !== undefined) data.notes = dto.notes;
     if (dto.isExcluded !== undefined) data.isExcluded = dto.isExcluded;
+    if (dto.type !== undefined) data.type = dto.type;
 
-    if (dto.amount !== undefined) {
-      const sign = tx.type === 'debit' ? -1 : 1;
-      data.amount = new Prisma.Decimal(sign * Math.abs(dto.amount));
+    if (dto.amount !== undefined || dto.type !== undefined) {
+      // Use explicit type when provided (so user can flip debit/credit); else preserve current sign
+      const magnitude =
+        dto.amount !== undefined
+          ? Math.abs(dto.amount)
+          : Math.abs(Number(tx.amount));
+      const sign =
+        dto.type !== undefined
+          ? dto.type === 'debit'
+            ? -1
+            : 1
+          : Number(tx.amount) < 0
+            ? -1
+            : 1;
+      data.amount = new Prisma.Decimal(sign * magnitude);
     }
 
     if (dto.myShare !== undefined) {

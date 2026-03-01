@@ -13,6 +13,7 @@ type UpdateMutation = UseMutationResult<
       categoryId?: string | null;
       notes?: string | null;
       isExcluded?: boolean;
+      type?: 'debit' | 'credit';
       amount?: number;
       myShare?: number | null;
     };
@@ -27,6 +28,7 @@ export function useTransactionEditState(
   const [editDate, setEditDate] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editAmount, setEditAmount] = useState('');
+  const [editType, setEditType] = useState<'debit' | 'credit'>('debit');
   const [editCategoryId, setEditCategoryId] = useState<string | null>(
     null,
   );
@@ -37,6 +39,7 @@ export function useTransactionEditState(
     setEditDate(tx.date.slice(0, 10));
     setEditDescription(tx.description);
     setEditAmount(Math.abs(parseFloat(tx.amount)).toFixed(2));
+    setEditType(parseFloat(tx.amount) < 0 ? 'debit' : 'credit');
     setEditCategoryId(tx.category?.id ?? null);
     setEditNotes(tx.notes ?? '');
   };
@@ -53,6 +56,7 @@ export function useTransactionEditState(
           body: {
             date: editDate,
             description: editDescription.trim(),
+            type: editType,
             amount: amt,
             categoryId: editCategoryId,
             notes: editNotes.trim() || null,
@@ -68,11 +72,13 @@ export function useTransactionEditState(
     editDate,
     editDescription,
     editAmount,
+    editType,
     editCategoryId,
     editNotes,
     setEditDate,
     setEditDescription,
     setEditAmount,
+    setEditType,
     setEditCategoryId,
     setEditNotes,
     handleEditStart,

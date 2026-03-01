@@ -177,6 +177,7 @@ export function Transactions() {
                     editDate={editState.editDate}
                     editDescription={editState.editDescription}
                     editAmount={editState.editAmount}
+                    editType={editState.editType}
                     editCategoryId={editState.editCategoryId}
                     editNotes={editState.editNotes}
                     onEditDateChange={editState.setEditDate}
@@ -184,6 +185,7 @@ export function Transactions() {
                       editState.setEditDescription
                     }
                     onEditAmountChange={editState.setEditAmount}
+                    onEditTypeChange={editState.setEditType}
                     onEditCategoryIdChange={
                       editState.setEditCategoryId
                     }
@@ -223,10 +225,10 @@ export function Transactions() {
                           )}
                         </button>
                       </TableHead>
-                      <TableHead className="w-[220px] min-w-[180px]">
+                      <TableHead className="min-w-0 w-[220px]">
                         Description
                       </TableHead>
-                      <TableHead className="w-24 min-w-[5rem] text-right">
+                      <TableHead className="min-w-[8.5rem] w-[8.5rem] shrink-0 text-right">
                         Amount
                       </TableHead>
                       <TableHead className="w-[150px] min-w-[120px]">
@@ -253,6 +255,7 @@ export function Transactions() {
                         editDate={editState.editDate}
                         editDescription={editState.editDescription}
                         editAmount={editState.editAmount}
+                        editType={editState.editType}
                         editCategoryId={editState.editCategoryId}
                         editNotes={editState.editNotes}
                         onEditDateChange={editState.setEditDate}
@@ -260,6 +263,7 @@ export function Transactions() {
                           editState.setEditDescription
                         }
                         onEditAmountChange={editState.setEditAmount}
+                        onEditTypeChange={editState.setEditType}
                         onEditCategoryIdChange={
                           editState.setEditCategoryId
                         }
