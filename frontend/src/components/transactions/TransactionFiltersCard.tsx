@@ -52,10 +52,10 @@ export function TransactionFiltersCard({
             value={accountId || null}
             onValueChange={(v) => onAccountChange(v ?? '')}
             placeholder="All accounts"
-            searchPlaceholder="Type to search..."
             allowEmpty
             emptyOption={{ value: null, label: 'All accounts' }}
             triggerClassName="w-full sm:w-[180px]"
+            searchable={false}
           />
         </div>
         <div className="grid gap-2 min-w-0">
@@ -68,10 +68,10 @@ export function TransactionFiltersCard({
             value={categoryId || null}
             onValueChange={(v) => onCategoryChange(v ?? '')}
             placeholder="All"
-            searchPlaceholder="Type to search..."
             allowEmpty
             emptyOption={{ value: null, label: 'All' }}
             triggerClassName="w-full sm:w-[180px]"
+            searchable={false}
           />
         </div>
         <div className="grid gap-2 min-w-0">

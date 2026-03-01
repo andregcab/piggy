@@ -39,6 +39,8 @@ type ComboboxProps<T = string> = {
   id?: string;
   /** Optional: accessible name when no visible label is used (e.g. aria-label) */
   ariaLabel?: string;
+  /** When false, the search input inside the dropdown is hidden. Default true. */
+  searchable?: boolean;
 };
 
 export function Combobox<T extends string>({
@@ -55,6 +57,7 @@ export function Combobox<T extends string>({
   emptyOption = { value: null, label: "—" },
   id,
   ariaLabel,
+  searchable = true,
 }: ComboboxProps<T>) {
   const [open, setOpen] = React.useState(false)
   const listboxId = React.useId()
@@ -85,7 +88,7 @@ export function Combobox<T extends string>({
       </PopoverTrigger>
       <PopoverContent className={cn("w-[var(--radix-popover-trigger-width)] p-0", className)} align="start">
         <Command>
-          <CommandInput placeholder={searchPlaceholder} />
+          {searchable && <CommandInput placeholder={searchPlaceholder} />}
           <CommandList id={listboxId}>
             <CommandEmpty>{emptyText}</CommandEmpty>
             <CommandGroup>
