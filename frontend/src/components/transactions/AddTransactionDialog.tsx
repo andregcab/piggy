@@ -9,6 +9,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Combobox } from '@/components/ui/combobox';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   Select,
   SelectContent,
@@ -168,13 +169,10 @@ function AddTransactionForm({
         </div>
         <div className="grid gap-2">
           <Label htmlFor="add-date">Date</Label>
-          <Input
+          <DatePicker
             id="add-date"
-            type="date"
             value={form.date}
-            onChange={(e) =>
-              setForm((f) => ({ ...f, date: e.target.value }))
-            }
+            onChange={(v) => setForm((f) => ({ ...f, date: v }))}
           />
         </div>
         <div className="grid gap-2">

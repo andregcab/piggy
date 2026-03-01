@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Combobox } from '@/components/ui/combobox';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   Tooltip,
   TooltipContent,
@@ -114,12 +115,11 @@ export function TransactionCard({
               <Label htmlFor={`tx-date-${transaction.id}`}>
                 Date
               </Label>
-              <Input
+              <DatePicker
                 id={`tx-date-${transaction.id}`}
-                type="date"
                 value={editDate}
-                onChange={(e) => onEditDateChange(e.target.value)}
-                className="h-8"
+                onChange={onEditDateChange}
+                triggerClassName="h-8"
               />
             </div>
             <div className="grid gap-2">

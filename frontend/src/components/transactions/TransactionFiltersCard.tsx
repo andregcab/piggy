@@ -4,9 +4,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Combobox } from '@/components/ui/combobox';
+import { DatePicker } from '@/components/ui/date-picker';
 
 type Account = { id: string; name: string };
 type Category = { id: string; name: string };
@@ -76,20 +76,18 @@ export function TransactionFiltersCard({
         </div>
         <div className="grid gap-2 min-w-0">
           <Label>From date</Label>
-          <Input
-            type="date"
+          <DatePicker
             value={fromDate}
-            onChange={(e) => onFromDateChange(e.target.value)}
-            className="w-full min-w-0 sm:w-[160px]"
+            onChange={onFromDateChange}
+            triggerClassName="w-full min-w-0 sm:w-[160px]"
           />
         </div>
         <div className="grid gap-2 min-w-0">
           <Label>To date</Label>
-          <Input
-            type="date"
+          <DatePicker
             value={toDate}
-            onChange={(e) => onToDateChange(e.target.value)}
-            className="w-full min-w-0 sm:w-[160px]"
+            onChange={onToDateChange}
+            triggerClassName="w-full min-w-0 sm:w-[160px]"
           />
         </div>
       </CardContent>

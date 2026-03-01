@@ -169,6 +169,17 @@ body[data-scroll-locked] {
   }
 }
 
+/* React Day Picker: use app theme so calendar matches light/dark mode */
+.rdp-root {
+  --rdp-accent-color: var(--primary);
+  --rdp-accent-background-color: var(--primary);
+  --rdp-today-color: var(--primary);
+  --rdp-range_start-color: var(--primary-foreground);
+  --rdp-range_end-color: var(--primary-foreground);
+  --rdp-range_start-date-background-color: var(--primary);
+  --rdp-range_end-date-background-color: var(--primary);
+}
+
 .font-piggy-tail {
   font-family: 'Dancing Script', cursive;
 }
