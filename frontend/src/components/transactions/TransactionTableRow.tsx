@@ -187,7 +187,7 @@ export function TransactionTableRow({
               min="0.01"
               value={editAmount}
               onChange={(e) => onEditAmountChange(e.target.value)}
-              className="h-8 w-20 min-w-0 text-right pl-2 pr-2 -mr-2 font-mono tabular-nums"
+              className="h-8 w-[5.5rem] min-w-0 text-right pl-2 pr-2 -mr-2 font-mono tabular-nums"
               form={`edit-tx-form-${transaction.id}`}
             />
             <Button
@@ -307,17 +307,19 @@ export function TransactionTableRow({
             className="h-8 w-full min-w-0 pl-2 -ml-2"
             form={`edit-tx-form-${transaction.id}`}
           />
-        ) : (
+        ) : transaction.notes ? (
           <Tooltip>
             <TooltipTrigger asChild>
               <span className="text-muted-foreground text-sm truncate block min-w-0 cursor-default">
-                {transaction.notes ?? '—'}
+                {transaction.notes}
               </span>
             </TooltipTrigger>
-            <TooltipContent>
-              {transaction.notes ?? '—'}
-            </TooltipContent>
+            <TooltipContent>{transaction.notes}</TooltipContent>
           </Tooltip>
+        ) : (
+          <span className="text-muted-foreground text-sm truncate block min-w-0 cursor-default">
+            —
+          </span>
         )}
       </TableCell>
       <TableCell className="w-20 shrink-0">

@@ -153,7 +153,7 @@ export function TransactionCard({
                   min="0.01"
                   value={editAmount}
                   onChange={(e) => onEditAmountChange(e.target.value)}
-                  className="h-8 w-24"
+                  className="h-8 w-[5.5rem]"
                 />
                 <Button
                   type="button"
