@@ -27,6 +27,7 @@ Assumptions:
 - **Tooling:** Vite + React + TypeScript.
 - **UI:** Tailwind CSS + shadcn/ui.
 - **Data:** React Query (TanStack Query) for API data; minimal local state.
+- **Charts:** Chart.js (react-chartjs-2) for dashboard bar and pie.
 - **Routing:** React Router.
 - **Testing:** Vitest for unit tests (no RTL or E2E in v1).
 
@@ -84,7 +85,7 @@ Assumptions:
 9. Accounts & categories UI – CRUD dialogs, category toggles.
 10. Transactions UI – Table, filters, pagination, inline edit.
 11. CSV import UI – Drag-and-drop, account select, progress/summary.
-12. Analytics UI – Dashboard, monthly totals, simple charts (Recharts).
+12. Analytics UI – Dashboard, monthly totals, simple charts (Chart.js).
 13. Polish & docs – README (env, DB, scripts), PLAN.md in repo.
 
 ## 9. Future enhancements (beyond v1)

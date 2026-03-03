@@ -1,6 +1,6 @@
 # Budget Tracker
 
-A multi-user, self-hosted budget tracking web app. Import bank CSVs, categorize transactions, and track spending with a simple dashboard.
+Multi-user, self-hosted budget tracking. Import bank CSVs, categorize transactions, track spending. Your data stays in your PostgreSQL database.
 
 ## Features
 
@@ -15,89 +15,46 @@ A multi-user, self-hosted budget tracking web app. Import bank CSVs, categorize 
 ## Stack
 
 - **Backend:** NestJS, TypeScript, Prisma, PostgreSQL, JWT auth
-- **Frontend:** Vite, React, TypeScript, Tailwind CSS, shadcn/ui, React Query, React Router
+- **Frontend:** Vite, React, TypeScript, Tailwind, shadcn/ui, React Query, React Router, Chart.js
 
 ## Prerequisites
 
-- Node.js 18+
-- PostgreSQL (or use the connection string in `.env` for your setup)
+Node.js 18+, PostgreSQL.
 
 ## Setup
 
-### 1. Install dependencies
+**1. Install**
 
 ```bash
 npm install
-cd backend && npm install
-cd ../frontend && npm install
+cd backend && npm install && cd ../frontend && npm install
 ```
 
-### 2. Database
-
-Create a PostgreSQL database and set the URL in `backend/.env`:
+**2. Database**
 
 ```bash
 cp backend/.env.example backend/.env
-# Edit backend/.env and set DATABASE_URL, e.g.:
-# DATABASE_URL="postgresql://user:password@localhost:5432/budget_tracker"
-```
-
-Run migrations (from repo root):
-
-```bash
+# Set DATABASE_URL in backend/.env
 npm run db:migrate
+cd backend && npm run db:seed   # optional, default categories
 ```
 
-Seed default categories (optional, after first migration):
+**3. Run**
 
-```bash
-cd backend && npm run db:seed
-```
+Two terminals: `npm run dev:backend` then `npm run dev:frontend`. Open http://localhost:5173, register, add an account, import a CSV from **Import**.
 
-### 3. Environment
+**Production:** `npm run build`; serve `frontend/dist` and run `backend` with `npm run start:prod`. Details: [DEPLOYMENT.md](./DEPLOYMENT.md).
 
-- **Backend** (`backend/.env`): `DATABASE_URL` (required), `JWT_SECRET` (required in production), optional `PORT` (default 3000), optional `CORS_ORIGIN`. See `backend/.env.example`.
-- **Frontend**: Uses `/api` proxy to the backend when running with `npm run dev:frontend`; ensure the backend is running on the configured port.
+## Scripts (repo root)
 
-### 4. Run
+| Command | Description |
+|---------|-------------|
+| `npm run dev:backend` | Backend (watch) |
+| `npm run dev:frontend` | Frontend dev server |
+| `npm run build` | Build both |
+| `npm run test` | Backend + frontend tests |
+| `npm run db:migrate` | Prisma migrations |
+| `npm run db:studio` | Prisma Studio |
+| `npm run lint` | Lint backend and frontend |
 
-**Development**
-
-- Terminal 1 – API: `npm run dev:backend` (or `cd backend && npm run start:dev`)
-- Terminal 2 – Frontend: `npm run dev:frontend` (or `cd frontend && npm run dev`)
-
-Open the frontend (e.g. http://localhost:5173). Register a user, add an account, and import a bank CSV from the Import page.
-
-**Production build**
-
-```bash
-npm run build
-```
-
-Serve `frontend/dist` with a static server and run the backend with `cd backend && npm run start:prod`. See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for full home-server deployment (env vars, reverse proxy, systemd).
-
-## Scripts (from repo root)
-
-| Script | Description |
-|--------|-------------|
-| `npm run dev:backend` | Start backend in watch mode |
-| `npm run dev:frontend` | Start frontend dev server |
-| `npm run build` | Build backend and frontend |
-| `npm run test` | Run backend and frontend tests |
-| `npm run db:generate` | Generate Prisma client |
-| `npm run db:migrate` | Run Prisma migrations (requires DB) |
-| `npm run db:studio` | Open Prisma Studio |
-| `npm run db:seed` | Seed default categories (run from `backend/`) |
-
-## CSV import format
-
-Expected columns (case-insensitive, common bank export aliases supported):
-
-- **Required:** Date (or Post Date), Description (or Details), Amount
-- **Optional:** Type, Balance, Category
-
-Duplicate rows (same account, date, description, amount) are skipped.
-
-## License
-
-Private / unlicensed.
+**CSV import:** Required – Date, Description, Amount. Optional – Type, Balance, Category. Duplicates (same account/date/description/amount) are skipped.
