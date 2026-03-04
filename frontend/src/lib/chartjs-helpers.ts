@@ -163,12 +163,21 @@ export function getChartJsThemeColors(): ChartJsThemeColors {
 
   const foreground = getCssVar('--foreground');
   const card = getCssVar('--card');
+  const background = getCssVar('--background');
   const border = getCssVar('--border');
   const muted = getCssVar('--muted-foreground');
+  const isDark =
+    document.documentElement.classList.contains('dark');
+
+  const surfaceFallback = isDark
+    ? 'rgba(15,23,42,0.96)'
+    : 'rgba(255,255,255,0.96)';
 
   return {
-    text: foreground || 'rgba(15,23,42,1)',
-    surface: card || 'rgba(255,255,255,0.96)',
+    text:
+      foreground ||
+      (isDark ? 'rgba(226,232,240,1)' : 'rgba(15,23,42,1)'),
+    surface: card || background || surfaceFallback,
     border: border || 'rgba(209,213,219,0.9)',
     grid: muted || 'rgba(229,231,235,0.9)',
   };
@@ -539,13 +548,19 @@ export function getPieDataLabelsOptions(textColor: string) {
 }
 
 /** DataLabels plugin options for bar: dollar amount above each bar. */
-export function getBarDataLabelsOptions(textColor: string) {
+export function getBarDataLabelsOptions(
+  textColor: string,
+  backgroundColor: string,
+) {
   return {
     color: textColor,
+    backgroundColor,
     font: { size: 11, weight: 'normal' as const },
     formatter: (value: number) => formatCurrency(value),
     anchor: 'end' as const,
     align: 'top' as const,
     offset: 2,
+    padding: 4,
+    borderWidth: 0,
   };
 }

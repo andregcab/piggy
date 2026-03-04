@@ -5,6 +5,7 @@ import {
   type ReactNode,
 } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { getMonthRangeFor } from '@/api/transactions';
 import {
   dashboardSelectionIsFromPreviousMonth,
   getDashboardMonth,
@@ -84,9 +85,13 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
     (year: number, month: number) => {
       if (!userId) return;
       setDashboardMonth(userId, year, month);
+      const { from, to } = getMonthRangeFor(year, month);
+      setTransactionsDateRangeStorage(userId, from, to);
       setPrefs((p) => ({
         ...p,
         dashboardMonth: { year, month, lastSelectedAt: Date.now() },
+        transactionsFromDate: from,
+        transactionsToDate: to,
       }));
     },
     [userId],

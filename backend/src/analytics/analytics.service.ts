@@ -12,8 +12,9 @@ export class AnalyticsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getMonthlySummary(userId: string, year: number, month: number) {
-    const start = new Date(year, month - 1, 1);
-    const end = new Date(year, month, 0, 23, 59, 59);
+    // Use UTC month boundaries so the filter is timezone-independent and matches calendar month.
+    const start = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0, 0));
+    const end = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999));
 
     const [transactions, revenueOverride, user, additionalIncomes] =
       await Promise.all([

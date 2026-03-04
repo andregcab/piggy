@@ -17,7 +17,7 @@ export function SpendingBarChart({
   categories,
   className,
 }: SpendingBarChartProps) {
-  useTheme(); // re-render when theme toggles so chart colors update
+  const { theme } = useTheme(); // re-render and remount chart when theme toggles
   const data = buildBarSpendingData(categories);
   const baseOptions =
     useChartJsAnimationOptions() as import('chart.js').ChartOptions<'bar'>;
@@ -26,9 +26,15 @@ export function SpendingBarChart({
   const options = {
     ...baseOptions,
     indexAxis: 'x' as const,
+    layout: {
+      padding: { top: 24 },
+    },
     plugins: {
       ...baseOptions.plugins,
-      datalabels: getBarDataLabelsOptions(colors.text),
+      datalabels: getBarDataLabelsOptions(
+        colors.text,
+        colors.surface,
+      ),
       tooltip: { enabled: false },
       legend: {
         ...(baseOptions.plugins?.legend ?? {}),
@@ -53,12 +59,14 @@ export function SpendingBarChart({
         grid: {
           display: false,
         },
+        border: { display: false },
       },
       y: {
         beginAtZero: true,
         grid: {
           color: colors.grid,
         },
+        border: { display: false },
         ticks: {
           precision: 0,
           color: colors.text,
@@ -74,6 +82,7 @@ export function SpendingBarChart({
   return (
     <div className={className}>
       <Bar
+        key={theme}
         data={data}
         options={options as import('chart.js').ChartOptions<'bar'>}
       />
