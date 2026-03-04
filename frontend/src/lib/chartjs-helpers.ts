@@ -3,6 +3,9 @@ import {
   PolarAreaController,
   BarController,
   PieController,
+  LineController,
+  LineElement,
+  PointElement,
   ArcElement,
   BarElement,
   RadialLinearScale,
@@ -18,6 +21,7 @@ import type { ChartCategory } from '@/hooks/useDashboardData';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { collapseForPie } from '@/lib/chart-utils';
 import { formatCurrency } from '@/lib/transaction-utils';
+import type { TrendsResponse } from '@/types';
 
 // Register the pieces of Chart.js we actually use.
 /** Auto-hide pie tooltip after a short delay on tap/click so mobile users get predictable behavior (show for ~2.5s then dismiss). */
@@ -101,6 +105,9 @@ Chart.register(
   PolarAreaController,
   BarController,
   PieController,
+  LineController,
+  LineElement,
+  PointElement,
   ArcElement,
   BarElement,
   RadialLinearScale,
@@ -119,6 +126,7 @@ export type PolarSpendingData = ChartData<
 >;
 export type BarSpendingData = ChartData<'bar', number[], string>;
 export type PieSpendingData = ChartData<'pie', number[], string>;
+export type TrendsLineData = ChartData<'line', number[], string>;
 
 export type ChartJsThemeColors = {
   surface: string;
@@ -135,6 +143,14 @@ function withAlpha(color: string, alpha: number): string {
   return color;
 }
 
+function getCssVar(name: string): string {
+  if (typeof document === 'undefined') return '';
+  const value = getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim();
+  return value || '';
+}
+
 export function getChartJsThemeColors(): ChartJsThemeColors {
   if (typeof document === 'undefined') {
     return {
@@ -145,22 +161,16 @@ export function getChartJsThemeColors(): ChartJsThemeColors {
     };
   }
 
-  const isDark = document.documentElement.classList.contains('dark');
-
-  if (isDark) {
-    return {
-      surface: 'rgba(15,23,42,0.96)', // slate-900-ish
-      border: 'rgba(51,65,85,0.85)', // slate-700-ish
-      grid: 'rgba(71,85,105,0.65)', // slate-600-ish
-      text: 'rgba(226,232,240,1)', // slate-200-ish
-    };
-  }
+  const foreground = getCssVar('--foreground');
+  const card = getCssVar('--card');
+  const border = getCssVar('--border');
+  const muted = getCssVar('--muted-foreground');
 
   return {
-    surface: 'rgba(255,255,255,0.96)', // white
-    border: 'rgba(209,213,219,0.9)', // gray-300
-    grid: 'rgba(229,231,235,0.9)', // gray-200
-    text: 'rgba(15,23,42,1)', // slate-900
+    text: foreground || 'rgba(15,23,42,1)',
+    surface: card || 'rgba(255,255,255,0.96)',
+    border: border || 'rgba(209,213,219,0.9)',
+    grid: muted || 'rgba(229,231,235,0.9)',
   };
 }
 
@@ -247,6 +257,117 @@ export function buildBarSpendingData(
         borderSkipped: false,
       },
     ],
+  };
+}
+
+const MONTH_SHORT = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+export function buildTrendsLineData(
+  points: TrendsResponse,
+): TrendsLineData {
+  const labels = points.map(
+    (p) => `${MONTH_SHORT[p.month - 1]} ${String(p.year).slice(2)}`,
+  );
+  const savingsColor =
+    getCssVar('--positive') || 'oklch(0.72 0.14 145)';
+
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'Savings',
+        data: points.map((p) => p.savings),
+        borderColor: savingsColor,
+        backgroundColor: withAlpha(savingsColor, 0.1),
+        borderWidth: 2,
+        pointRadius: 3,
+        pointHoverRadius: 5,
+        fill: false,
+        tension: 0.2,
+      },
+    ],
+  };
+}
+
+export function useTrendsLineChartOptions(): ChartOptions<'line'> {
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const colors = getChartJsThemeColors();
+
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          usePointStyle: true,
+          boxWidth: 8,
+          boxHeight: 8,
+          color: colors.text,
+        },
+      },
+      tooltip: {
+        borderColor: colors.border,
+        borderWidth: 1,
+        backgroundColor: colors.surface,
+        titleColor: colors.text,
+        bodyColor: colors.text,
+        padding: 8,
+        callbacks: {
+          label(item: TooltipItem<'line'>) {
+            const raw =
+              typeof item.raw === 'number'
+                ? item.raw
+                : ((item.parsed as { y?: number })?.y ?? Number.NaN);
+            if (!Number.isFinite(raw)) return '';
+            const label = item.dataset.label ?? '';
+            return `${label}: ${formatCurrency(raw)}`;
+          },
+        },
+      },
+      datalabels: { display: false },
+    },
+    scales: {
+      x: {
+        grid: { color: colors.grid },
+        ticks: {
+          color: colors.text,
+          maxRotation: 45,
+          autoSkip: true,
+        },
+      },
+      y: {
+        grid: { color: colors.grid },
+        ticks: {
+          color: colors.text,
+          callback(value) {
+            const v =
+              typeof value === 'number' ? value : Number(value);
+            if (!Number.isFinite(v)) return '';
+            return formatCurrency(v);
+          },
+        },
+      },
+    },
+    animation: prefersReducedMotion
+      ? false
+      : {
+          duration: 260,
+          easing: 'easeInOutCubic',
+        },
   };
 }
 

@@ -41,9 +41,7 @@ export function Import() {
       setFile(null);
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['imports'] });
-      queryClient.invalidateQueries({
-        queryKey: ['analytics', 'monthly'],
-      });
+      queryClient.invalidateQueries({ queryKey: ['analytics'] });
       toast.success(
         `Imported ${data.imported} transaction(s)${data.skipped > 0 ? `, ${data.skipped} skipped (duplicates)` : ''}`,
       );

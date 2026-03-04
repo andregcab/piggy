@@ -14,9 +14,7 @@ export function useTransactionMutations() {
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ['transactions'] });
-    queryClient.invalidateQueries({
-      queryKey: ['analytics', 'monthly'],
-    });
+    queryClient.invalidateQueries({ queryKey: ['analytics'] });
   };
 
   const updateMutation = useMutation({
@@ -49,9 +47,7 @@ export function useTransactionMutations() {
           };
         },
       );
-      queryClient.invalidateQueries({
-        queryKey: ['analytics', 'monthly'],
-      });
+      queryClient.invalidateQueries({ queryKey: ['analytics'] });
     },
     onError: (err) => {
       toast.error(

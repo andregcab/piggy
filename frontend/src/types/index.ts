@@ -59,6 +59,16 @@ export type MonthlySummary = {
   }[];
 };
 
+/** Single point in trends (one month) from analytics trends API */
+export type TrendsPoint = {
+  year: number;
+  month: number;
+  savings: number;
+};
+
+/** Trends API response: array of points, oldest first */
+export type TrendsResponse = TrendsPoint[];
+
 /** Additional income item from revenue API */
 export type AdditionalIncomeItem = {
   id: string;

@@ -161,6 +161,8 @@ export function Dashboard() {
       />
 
       <SpendingChartCard
+        year={year}
+        month={effectiveMonth}
         variableCategories={variableCategories}
         variableTotal={variableTotal}
       />
@@ -177,13 +179,16 @@ export function Dashboard() {
                 Welcome to {monthName}
               </h2>
               <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-                It’s {monthName}! When you’re ready, add transactions and your
-                spending view will fill in. You can import from your bank’s CSV
-                or add entries manually.
+                It’s {monthName}! When you’re ready, add transactions
+                and your spending view will fill in. You can import
+                from your bank’s CSV or add entries manually.
               </p>
               <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
                 <Button asChild variant="default" size="sm">
-                  <Link to="/import" className="inline-flex items-center gap-2">
+                  <Link
+                    to="/import"
+                    className="inline-flex items-center gap-2"
+                  >
                     <FileDown className="h-4 w-4" />
                     Import from CSV
                   </Link>
@@ -202,21 +207,19 @@ export function Dashboard() {
           </CardContent>
         </Card>
       )}
-      {data &&
-        !isViewingCurrentMonth &&
-        chartData.length === 0 && (
-          <Card className="mt-6 nudge-attention">
-            <CardContent className="py-8">
-              <p className="text-muted-foreground text-center">
-                No spending data for this month. Import a CSV from the{' '}
-                <Link to="/import" className="underline">
-                  Import
-                </Link>{' '}
-                page to get started.
-              </p>
-            </CardContent>
-          </Card>
-        )}
+      {data && !isViewingCurrentMonth && chartData.length === 0 && (
+        <Card className="mt-6 nudge-attention">
+          <CardContent className="py-8">
+            <p className="text-muted-foreground text-center">
+              No spending data for this month. Import a CSV from the{' '}
+              <Link to="/import" className="underline">
+                Import
+              </Link>{' '}
+              page to get started.
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

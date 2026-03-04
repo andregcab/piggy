@@ -38,9 +38,7 @@ export function useCategoryMutations() {
           now.getMonth() + 1,
         );
         queryClient.invalidateQueries({ queryKey: ['transactions'] });
-        queryClient.invalidateQueries({
-          queryKey: ['analytics', 'monthly'],
-        });
+        queryClient.invalidateQueries({ queryKey: ['analytics'] });
         toast.success(
           updated > 0
             ? `Category added. ${updated} transaction(s) updated this month.`
@@ -80,9 +78,7 @@ export function useCategoryMutations() {
           now.getMonth() + 1,
         );
         queryClient.invalidateQueries({ queryKey: ['transactions'] });
-        queryClient.invalidateQueries({
-          queryKey: ['analytics', 'monthly'],
-        });
+        queryClient.invalidateQueries({ queryKey: ['analytics'] });
         if (updated > 0) {
           toast.success(
             `${updated} transaction(s) updated this month.`,
@@ -130,9 +126,7 @@ export function useCategoryMutations() {
       queryClient.invalidateQueries({
         queryKey: ['category-budgets'],
       });
-      queryClient.invalidateQueries({
-        queryKey: ['analytics', 'monthly'],
-      });
+      queryClient.invalidateQueries({ queryKey: ['analytics'] });
     },
   });
 
@@ -142,9 +136,7 @@ export function useCategoryMutations() {
       queryClient.invalidateQueries({
         queryKey: ['category-budgets'],
       });
-      queryClient.invalidateQueries({
-        queryKey: ['analytics', 'monthly'],
-      });
+      queryClient.invalidateQueries({ queryKey: ['analytics'] });
     },
   });
 
@@ -165,9 +157,7 @@ export function useCategoryMutations() {
           now.getMonth() + 1,
         );
         queryClient.invalidateQueries({ queryKey: ['transactions'] });
-        queryClient.invalidateQueries({
-          queryKey: ['analytics', 'monthly'],
-        });
+        queryClient.invalidateQueries({ queryKey: ['analytics'] });
         if (updated > 0) {
           toast.success(
             `${updated} transaction(s) updated this month.`,

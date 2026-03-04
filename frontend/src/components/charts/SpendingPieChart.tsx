@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { ChartCategory } from '@/hooks/useDashboardData';
+import { useTheme } from '@/hooks/useTheme';
 import { Pie } from 'react-chartjs-2';
 import {
   buildPieSpendingData,
@@ -17,6 +18,7 @@ export function SpendingPieChart({
   categories,
   className,
 }: SpendingPieChartProps) {
+  useTheme(); // re-render when theme toggles so chart colors update
   const data = buildPieSpendingData(categories);
   const baseOptions = useChartJsAnimationOptions();
   const colors = getChartJsThemeColors();
@@ -40,6 +42,8 @@ export function SpendingPieChart({
         ? { display: false }
         : getPieDataLabelsOptions(colors.text),
       legend: { display: false },
+      // When labels are visible (desktop/tablet), no need for hover tooltip
+      tooltip: { enabled: underTablet },
     },
   } as const;
 

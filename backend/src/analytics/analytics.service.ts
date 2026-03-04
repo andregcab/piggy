@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
+export type TrendsPointDto = {
+  year: number;
+  month: number;
+  savings: number;
+};
+
 @Injectable()
 export class AnalyticsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -113,5 +119,34 @@ export class AnalyticsService {
         }),
       ),
     };
+  }
+
+  /** Last N months ending at (year, month). Each point has savings for that month. */
+  async getTrends(
+    userId: string,
+    year: number,
+    month: number,
+    months: number = 12,
+  ): Promise<TrendsPointDto[]> {
+    const points: TrendsPointDto[] = [];
+    for (let i = months - 1; i >= 0; i--) {
+      let m = month - i;
+      let y = year;
+      while (m < 1) {
+        m += 12;
+        y -= 1;
+      }
+      while (m > 12) {
+        m -= 12;
+        y += 1;
+      }
+      const summary = await this.getMonthlySummary(userId, y, m);
+      points.push({
+        year: summary.year,
+        month: summary.month,
+        savings: summary.savings,
+      });
+    }
+    return points;
   }
 }

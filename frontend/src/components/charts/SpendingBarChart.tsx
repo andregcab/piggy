@@ -1,4 +1,5 @@
 import type { ChartCategory } from '@/hooks/useDashboardData';
+import { useTheme } from '@/hooks/useTheme';
 import { Bar } from 'react-chartjs-2';
 import {
   buildBarSpendingData,
@@ -16,6 +17,7 @@ export function SpendingBarChart({
   categories,
   className,
 }: SpendingBarChartProps) {
+  useTheme(); // re-render when theme toggles so chart colors update
   const data = buildBarSpendingData(categories);
   const baseOptions =
     useChartJsAnimationOptions() as import('chart.js').ChartOptions<'bar'>;

@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { CardTitleWithInfo } from '@/components/ui/card-title-with-info';
 import { Button } from '@/components/ui/button';
@@ -9,21 +11,38 @@ import { CalendarRange } from 'lucide-react';
 import type { ChartCategory } from '@/hooks/useDashboardData';
 import { SpendingBarChart } from '@/components/charts/SpendingBarChart';
 import { SpendingPieChart } from '@/components/charts/SpendingPieChart';
+import { SpendingTrendsChart } from '@/components/charts/SpendingTrendsChart';
+import { getTrends } from '@/api/analytics';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
+type SpendingTab = 'this_month' | 'trends';
+
 type SpendingChartCardProps = {
+  year: number;
+  month: number;
   variableCategories: ChartCategory[];
   variableTotal: number;
 };
 
 export function SpendingChartCard({
+  year,
+  month,
   variableCategories,
   variableTotal,
 }: SpendingChartCardProps) {
   const { spendingChartType: chartType, setSpendingChartType } =
     useUserPreferences();
   const prefersReducedMotion = usePrefersReducedMotion();
+  const [activeTab, setActiveTab] =
+    useState<SpendingTab>('this_month');
+
+  const { data: trendsData = [] } = useQuery({
+    queryKey: ['analytics', 'trends', year, month, 12],
+    queryFn: () => getTrends(year, month, 12),
+    placeholderData: (prev) => prev,
+    enabled: activeTab === 'trends',
+  });
 
   const handleChartTypeChange = (type: 'bar' | 'pie') => {
     setSpendingChartType(type);
@@ -132,7 +151,32 @@ export function SpendingChartCard({
           </div>
 
           <div className="mt-16 space-y-3 min-w-0 overflow-visible">
-            {variableTotal === 0 ? (
+            <div className="flex gap-1">
+              {(
+                [
+                  { id: 'this_month' as const, label: 'This month' },
+                  { id: 'trends' as const, label: 'Trends' },
+                ] as const
+              ).map(({ id, label }) => (
+                <Button
+                  key={id}
+                  variant={activeTab === id ? 'secondary' : 'ghost'}
+                  size="sm"
+                  onClick={() => setActiveTab(id)}
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
+
+            {activeTab === 'trends' ? (
+              <div className="w-full h-[320px] md:h-[360px]">
+                <SpendingTrendsChart
+                  points={trendsData}
+                  className="w-full h-full"
+                />
+              </div>
+            ) : variableTotal === 0 ? (
               <div
                 className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 py-12 px-6 text-center"
                 aria-hidden
