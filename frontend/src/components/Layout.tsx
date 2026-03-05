@@ -8,24 +8,17 @@ import { GettingStartedCard } from '@/components/GettingStartedCard';
 import { cn } from '@/lib/utils';
 
 function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
+  const { toggleTheme } = useTheme();
   return (
     <Button
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className="h-9 w-9 shrink-0"
-      aria-label={
-        theme === 'dark'
-          ? 'Switch to light mode'
-          : 'Switch to dark mode'
-      }
+      className="h-9 w-9 shrink-0 relative"
+      aria-label="Toggle light or dark theme"
     >
-      {theme === 'dark' ? (
-        <Sun className="h-4 w-4" />
-      ) : (
-        <Moon className="h-4 w-4" />
-      )}
+      <Moon className="h-4 w-4 block dark:hidden" aria-hidden />
+      <Sun className="h-4 w-4 hidden dark:block" aria-hidden />
     </Button>
   );
 }
@@ -99,7 +92,10 @@ export function Layout() {
           </div>
         </div>
         {mobileMenuOpen && (
-          <nav className="flex flex-col border-t border-border px-4 py-3 md:hidden" aria-label="Main">
+          <nav
+            className="flex flex-col border-t border-border px-4 py-3 md:hidden"
+            aria-label="Main"
+          >
             <div className="flex flex-col gap-1">
               {navPrimary.map(({ to, label }) => (
                 <Link
@@ -117,7 +113,10 @@ export function Layout() {
                 </Link>
               ))}
             </div>
-            <div className="my-2 border-t border-border" role="presentation" />
+            <div
+              className="my-2 border-t border-border"
+              role="presentation"
+            />
             <div className="flex flex-col gap-1">
               {navSecondary.map(({ to, label }) => (
                 <Link
@@ -158,10 +157,7 @@ export function Layout() {
             </Link>
           ))}
         </div>
-        <span
-          className="h-5 w-px shrink-0 bg-border"
-          aria-hidden
-        />
+        <span className="h-5 w-px shrink-0 bg-border" aria-hidden />
         <div className="flex flex-wrap gap-2">
           {navSecondary.map(({ to, label }) => (
             <Link
@@ -179,7 +175,10 @@ export function Layout() {
           ))}
         </div>
       </nav>
-      <main id="main" className="flex-1 min-w-0 overflow-x-hidden pt-4 px-3 pb-3 sm:pt-5 sm:px-4 sm:pb-4 text-foreground">
+      <main
+        id="main"
+        className="flex-1 min-w-0 overflow-x-hidden pt-4 px-3 pb-3 sm:pt-5 sm:px-4 sm:pb-4 text-foreground"
+      >
         <GettingStartedCard />
         <Outlet />
       </main>

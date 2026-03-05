@@ -18,10 +18,10 @@ export function SpendingPieChart({
   categories,
   className,
 }: SpendingPieChartProps) {
-  useTheme(); // re-render when theme toggles so chart colors update
+  const { theme } = useTheme();
   const data = buildPieSpendingData(categories);
   const baseOptions = useChartJsAnimationOptions();
-  const colors = getChartJsThemeColors();
+  const colors = getChartJsThemeColors(theme);
   const [underTablet, setUnderTablet] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 767px)');

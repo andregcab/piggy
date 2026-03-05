@@ -1,4 +1,5 @@
 import type { ChartCategory } from '@/hooks/useDashboardData';
+import { useTheme } from '@/hooks/useTheme';
 import { PolarArea } from 'react-chartjs-2';
 import {
   buildPolarSpendingData,
@@ -15,9 +16,10 @@ export function SpendingPolarChart({
   categories,
   className,
 }: SpendingPolarChartProps) {
+  const { theme } = useTheme();
   const data = buildPolarSpendingData(categories);
   const baseOptions = useChartJsAnimationOptions();
-  const colors = getChartJsThemeColors();
+  const colors = getChartJsThemeColors(theme);
 
   const options = {
     ...baseOptions,

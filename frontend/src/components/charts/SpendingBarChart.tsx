@@ -17,11 +17,11 @@ export function SpendingBarChart({
   categories,
   className,
 }: SpendingBarChartProps) {
-  const { theme } = useTheme(); // re-render and remount chart when theme toggles
+  const { theme } = useTheme();
   const data = buildBarSpendingData(categories);
   const baseOptions =
     useChartJsAnimationOptions() as import('chart.js').ChartOptions<'bar'>;
-  const colors = getChartJsThemeColors();
+  const colors = getChartJsThemeColors(theme);
 
   const options = {
     ...baseOptions,

@@ -19,8 +19,10 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { PIE_COLORS, barColorByRatio } from '@/lib/chart-config';
 import type { ChartCategory } from '@/hooks/useDashboardData';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useTheme } from '@/hooks/useTheme';
 import { collapseForPie } from '@/lib/chart-utils';
 import { formatCurrency } from '@/lib/transaction-utils';
+import type { Theme } from '@/lib/theme-utils';
 import type { TrendsResponse } from '@/types';
 
 // Register the pieces of Chart.js we actually use.
@@ -151,14 +153,39 @@ function getCssVar(name: string): string {
   return value || '';
 }
 
-export function getChartJsThemeColors(): ChartJsThemeColors {
+/** Fallback colors so chart doesn't depend on DOM timing (useEffect applies .dark after render). */
+const CHART_COLORS_DARK: ChartJsThemeColors = {
+  text: 'rgba(226,232,240,1)',
+  surface: 'rgba(15,23,42,0.96)',
+  border: 'rgba(51,65,85,0.85)',
+  grid: 'rgba(148,163,184,0.45)',
+};
+const CHART_COLORS_LIGHT: ChartJsThemeColors = {
+  text: 'rgba(15,23,42,1)',
+  surface: 'rgba(255,255,255,0.96)',
+  border: 'rgba(209,213,219,0.9)',
+  grid: 'rgba(229,231,235,0.9)',
+};
+
+/**
+ * Returns Chart.js-ready colors. When `theme` is passed from useTheme(), only
+ * fallbacks are used so colors stay in sync with context (the DOM .dark class
+ * may not be applied yet in the same render).
+ */
+export function getChartJsThemeColors(
+  theme?: Theme,
+): ChartJsThemeColors {
   if (typeof document === 'undefined') {
-    return {
-      surface: 'rgba(15,23,42,0.96)',
-      border: 'rgba(51,65,85,0.85)',
-      grid: 'rgba(148,163,184,0.45)',
-      text: 'rgba(226,232,240,1)',
-    };
+    return CHART_COLORS_DARK;
+  }
+
+  const isDark =
+    theme !== undefined
+      ? theme === 'dark'
+      : document.documentElement.classList.contains('dark');
+
+  if (theme !== undefined) {
+    return isDark ? CHART_COLORS_DARK : CHART_COLORS_LIGHT;
   }
 
   const foreground = getCssVar('--foreground');
@@ -166,20 +193,20 @@ export function getChartJsThemeColors(): ChartJsThemeColors {
   const background = getCssVar('--background');
   const border = getCssVar('--border');
   const muted = getCssVar('--muted-foreground');
-  const isDark =
-    document.documentElement.classList.contains('dark');
-
-  const surfaceFallback = isDark
-    ? 'rgba(15,23,42,0.96)'
-    : 'rgba(255,255,255,0.96)';
 
   return {
     text:
       foreground ||
-      (isDark ? 'rgba(226,232,240,1)' : 'rgba(15,23,42,1)'),
-    surface: card || background || surfaceFallback,
-    border: border || 'rgba(209,213,219,0.9)',
-    grid: muted || 'rgba(229,231,235,0.9)',
+      (isDark ? CHART_COLORS_DARK.text : CHART_COLORS_LIGHT.text),
+    surface:
+      card ||
+      background ||
+      (isDark ? CHART_COLORS_DARK.surface : CHART_COLORS_LIGHT.surface),
+    border:
+      border ||
+      (isDark ? CHART_COLORS_DARK.border : CHART_COLORS_LIGHT.border),
+    grid:
+      muted || (isDark ? CHART_COLORS_DARK.grid : CHART_COLORS_LIGHT.grid),
   };
 }
 
@@ -313,7 +340,8 @@ export function buildTrendsLineData(
 
 export function useTrendsLineChartOptions(): ChartOptions<'line'> {
   const prefersReducedMotion = usePrefersReducedMotion();
-  const colors = getChartJsThemeColors();
+  const { theme } = useTheme();
+  const colors = getChartJsThemeColors(theme);
 
   return {
     responsive: true,
@@ -384,7 +412,8 @@ export function useChartJsAnimationOptions():
   | ChartOptions<'polarArea'>
   | ChartOptions<'bar'> {
   const prefersReducedMotion = usePrefersReducedMotion();
-  const colors = getChartJsThemeColors();
+  const { theme } = useTheme();
+  const colors = getChartJsThemeColors(theme);
 
   const common: ChartOptions = {
     responsive: true,
