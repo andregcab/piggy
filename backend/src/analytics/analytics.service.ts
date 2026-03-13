@@ -92,9 +92,14 @@ export class AnalyticsService {
       }
     }
 
+    const hasActivity =
+      transactions.length > 0 ||
+      !!revenueOverride ||
+      additionalIncomes.length > 0;
+
     const baseRevenue = revenueOverride
       ? Number(revenueOverride.amount)
-      : user?.monthlyIncome != null
+      : hasActivity && user?.monthlyIncome != null
         ? Number(user.monthlyIncome)
         : 0;
     const additionalTotal = additionalIncomes.reduce(

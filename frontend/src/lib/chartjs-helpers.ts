@@ -201,12 +201,15 @@ export function getChartJsThemeColors(
     surface:
       card ||
       background ||
-      (isDark ? CHART_COLORS_DARK.surface : CHART_COLORS_LIGHT.surface),
+      (isDark
+        ? CHART_COLORS_DARK.surface
+        : CHART_COLORS_LIGHT.surface),
     border:
       border ||
       (isDark ? CHART_COLORS_DARK.border : CHART_COLORS_LIGHT.border),
     grid:
-      muted || (isDark ? CHART_COLORS_DARK.grid : CHART_COLORS_LIGHT.grid),
+      muted ||
+      (isDark ? CHART_COLORS_DARK.grid : CHART_COLORS_LIGHT.grid),
   };
 }
 
@@ -317,6 +320,14 @@ export function buildTrendsLineData(
   const labels = points.map(
     (p) => `${MONTH_SHORT[p.month - 1]} ${String(p.year).slice(2)}`,
   );
+  // Build a running total so the line represents cumulative savings over time,
+  // starting from zero at the earliest point.
+  const cumulative: number[] = [];
+  let running = 0;
+  for (const p of points) {
+    running += p.savings;
+    cumulative.push(running);
+  }
   const savingsColor =
     getCssVar('--positive') || 'oklch(0.72 0.14 145)';
 
@@ -324,8 +335,8 @@ export function buildTrendsLineData(
     labels,
     datasets: [
       {
-        label: 'Savings',
-        data: points.map((p) => p.savings),
+        label: 'Cumulative savings',
+        data: cumulative,
         borderColor: savingsColor,
         backgroundColor: withAlpha(savingsColor, 0.1),
         borderWidth: 2,
@@ -387,6 +398,7 @@ export function useTrendsLineChartOptions(): ChartOptions<'line'> {
         },
       },
       y: {
+        beginAtZero: true,
         grid: { color: colors.grid },
         ticks: {
           color: colors.text,
