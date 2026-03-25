@@ -97,42 +97,50 @@ export function SpendingChartCard({
                   c.budget > 0
                     ? Math.min((c.total / c.budget) * 100, 100)
                     : 0;
+                const hasBudget = c.budget > 0;
+                const delta =
+                  hasBudget ? c.total - c.budget : 0;
+                const isOver = hasBudget && delta > 0.01;
+                const isUnder = hasBudget && delta < -0.01;
                 return (
                   <div key={c.id} className="space-y-1">
                     <div className="flex items-center justify-between text-sm">
                       <span
                         className={
-                          c.over
+                          isOver
                             ? 'font-medium text-destructive'
                             : 'font-medium'
                         }
                       >
                         {c.name}
                       </span>
-                      <span className="text-muted-foreground">
-                        {formatCurrency(c.total)}
-                        {c.budget > 0 && (
-                          <>
-                            {' '}
-                            / {formatCurrency(c.budget)}
-                            <span
-                              className={
-                                c.over
-                                  ? 'ml-1 font-medium text-destructive'
-                                  : 'ml-1 text-[var(--positive)]'
-                              }
-                            >
-                              {c.over ? 'Over' : 'Under'}
-                            </span>
-                          </>
+                      <span className="flex flex-wrap items-center justify-end gap-x-2 gap-y-0.5 text-muted-foreground">
+                        <span>
+                          {formatCurrency(c.total)}
+                          {hasBudget && (
+                            <>
+                              {' '}
+                              / {formatCurrency(c.budget)}
+                            </>
+                          )}
+                        </span>
+                        {isOver && (
+                          <span className="font-medium text-destructive">
+                            Over by {formatCurrency(delta)}
+                          </span>
+                        )}
+                        {isUnder && (
+                          <span className="text-[var(--positive)]">
+                            Under by {formatCurrency(-delta)}
+                          </span>
                         )}
                       </span>
                     </div>
-                    {c.budget > 0 && (
+                    {hasBudget && (
                       <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                         <div
                           className={`h-full rounded-full transition-all ${
-                            c.over ? 'bg-destructive' : 'bg-primary'
+                            isOver ? 'bg-destructive' : 'bg-primary'
                           }`}
                           style={{
                             width: `${Math.min(pct, 100)}%`,
