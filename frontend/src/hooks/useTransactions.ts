@@ -10,6 +10,8 @@ export function useTransactions() {
   const {
     transactionsPerPage: limit,
     setTransactionsPerPage,
+    transactionsSortOrder: sortOrder,
+    setTransactionsSortOrder: setTransactionsSortOrderPref,
     dashboardMonth,
     transactionsFromDate,
     transactionsToDate,
@@ -36,13 +38,12 @@ export function useTransactions() {
   const [accountId, setAccountId] = useState<string>('');
   const [categoryId, setCategoryId] = useState<string>('');
   const [page, setPage] = useState(1);
-  const [sortOrder, setSortOrderState] = useState<'asc' | 'desc'>(
-    'desc',
-  );
   const setSortOrder = (
     next: 'asc' | 'desc' | ((prev: 'asc' | 'desc') => 'asc' | 'desc'),
   ) => {
-    setSortOrderState(next);
+    const resolved =
+      typeof next === 'function' ? next(sortOrder) : next;
+    setTransactionsSortOrderPref(resolved);
     setPage(1);
   };
 

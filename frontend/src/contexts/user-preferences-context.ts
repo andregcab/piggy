@@ -2,10 +2,12 @@ import { createContext } from 'react';
 import type {
   SpendingChartType,
   TransactionsPerPage,
+  TransactionsSortOrder,
 } from '@/lib/user-preferences';
 
 export type UserPreferencesState = {
   transactionsPerPage: TransactionsPerPage;
+  transactionsSortOrder: TransactionsSortOrder;
   dashboardMonth: { year: number; month: number; lastSelectedAt?: number } | null;
   transactionsFromDate: string;
   transactionsToDate: string;
@@ -16,6 +18,7 @@ export type UserPreferencesState = {
 
 export type UserPreferencesContextValue = UserPreferencesState & {
   setTransactionsPerPage: (limit: TransactionsPerPage) => void;
+  setTransactionsSortOrder: (order: TransactionsSortOrder) => void;
   setDashboardMonth: (year: number, month: number) => void;
   setTransactionsDateRange: (from: string, to: string) => void;
   dashboardSelectionIsFromPreviousMonth: () => boolean;

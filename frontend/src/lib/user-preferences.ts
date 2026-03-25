@@ -5,6 +5,10 @@ const VALID_LIMITS = [25, 50, 100] as const;
 
 export type TransactionsPerPage = (typeof VALID_LIMITS)[number];
 
+const TRANSACTION_SORT_ORDERS = ['asc', 'desc'] as const;
+export type TransactionsSortOrder = (typeof TRANSACTION_SORT_ORDERS)[number];
+const DEFAULT_TRANSACTIONS_SORT_ORDER: TransactionsSortOrder = 'desc';
+
 export const SPENDING_CHART_TYPES = ['bar', 'pie'] as const;
 export type SpendingChartType = (typeof SPENDING_CHART_TYPES)[number];
 
@@ -21,6 +25,7 @@ type UserPrefs = {
   dashboardLastSelectedAt?: number;
   transactionsFromDate?: string;
   transactionsToDate?: string;
+  transactionsSortOrder?: string;
 };
 
 function getAllPreferences(): Record<string, UserPrefs> {
@@ -69,6 +74,30 @@ export function setTransactionsPerPage(
   if (!userId) return;
   setUserPrefs(userId, (p) => {
     p.transactionsPerPage = limit;
+  });
+}
+
+export function getTransactionsSortOrder(
+  userId: string | null | undefined,
+): TransactionsSortOrder {
+  const prefs = getUserPrefs(userId);
+  const val = prefs.transactionsSortOrder;
+  if (
+    typeof val === 'string' &&
+    TRANSACTION_SORT_ORDERS.includes(val as TransactionsSortOrder)
+  ) {
+    return val as TransactionsSortOrder;
+  }
+  return DEFAULT_TRANSACTIONS_SORT_ORDER;
+}
+
+export function setTransactionsSortOrder(
+  userId: string | null | undefined,
+  order: TransactionsSortOrder,
+) {
+  if (!userId) return;
+  setUserPrefs(userId, (p) => {
+    p.transactionsSortOrder = order;
   });
 }
 

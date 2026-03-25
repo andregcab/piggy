@@ -13,17 +13,20 @@ import {
   getGettingStartedDismissed,
   getSpendingChartType,
   getTransactionsPerPage,
+  getTransactionsSortOrder,
   getTransactionsDateRange,
   setDashboardMonth,
   setGettingStartedConfettiShown,
   setGettingStartedDismissed,
   setSpendingChartType,
   setTransactionsPerPage,
+  setTransactionsSortOrder as setTransactionsSortOrderStorage,
   setTransactionsDateRange as setTransactionsDateRangeStorage,
 } from '@/lib/user-preferences';
 import type {
   SpendingChartType,
   TransactionsPerPage,
+  TransactionsSortOrder,
 } from '@/lib/user-preferences';
 import {
   UserPreferencesContext,
@@ -35,6 +38,7 @@ function readPrefs(userId: string): UserPreferencesState {
   const { from, to } = getTransactionsDateRange(userId);
   return {
     transactionsPerPage: getTransactionsPerPage(userId),
+    transactionsSortOrder: getTransactionsSortOrder(userId),
     dashboardMonth: getDashboardMonth(userId),
     transactionsFromDate: from,
     transactionsToDate: to,
@@ -47,6 +51,7 @@ function readPrefs(userId: string): UserPreferencesState {
 function getDefaultPrefs(): UserPreferencesState {
   return {
     transactionsPerPage: 25,
+    transactionsSortOrder: 'desc',
     dashboardMonth: null,
     transactionsFromDate: '',
     transactionsToDate: '',
@@ -77,6 +82,15 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
       if (!userId) return;
       setTransactionsPerPage(userId, limit);
       setPrefs((p) => ({ ...p, transactionsPerPage: limit }));
+    },
+    [userId],
+  );
+
+  const setTransactionsSortOrderPref = useCallback(
+    (order: TransactionsSortOrder) => {
+      if (!userId) return;
+      setTransactionsSortOrderStorage(userId, order);
+      setPrefs((p) => ({ ...p, transactionsSortOrder: order }));
     },
     [userId],
   );
@@ -144,6 +158,7 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
   const value: UserPreferencesContextValue = {
     ...prefs,
     setTransactionsPerPage: setTransactionsPerPagePref,
+    setTransactionsSortOrder: setTransactionsSortOrderPref,
     setDashboardMonth: setDashboardMonthPref,
     setTransactionsDateRange: setTransactionsDateRangePref,
     dashboardSelectionIsFromPreviousMonth: dashboardSelectionIsFromPreviousMonthFn,

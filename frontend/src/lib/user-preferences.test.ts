@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   getTransactionsPerPage,
   setTransactionsPerPage,
+  getTransactionsSortOrder,
+  setTransactionsSortOrder,
   getSpendingChartType,
   setSpendingChartType,
   SPENDING_CHART_TYPES,
@@ -56,6 +58,28 @@ describe('user-preferences', () => {
         'user-1': { transactionsPerPage: 999 },
       });
       expect(getTransactionsPerPage('user-1')).toBe(25);
+    });
+  });
+
+  describe('getTransactionsSortOrder', () => {
+    it('returns default when no userId', () => {
+      expect(getTransactionsSortOrder(null)).toBe('desc');
+    });
+
+    it('returns default when no stored preference', () => {
+      expect(getTransactionsSortOrder('user-1')).toBe('desc');
+    });
+
+    it('returns stored value when valid', () => {
+      setTransactionsSortOrder('user-1', 'asc');
+      expect(getTransactionsSortOrder('user-1')).toBe('asc');
+    });
+
+    it('returns default for invalid stored value', () => {
+      mockLocalStorage[STORAGE_KEY] = JSON.stringify({
+        'user-1': { transactionsSortOrder: 'invalid' },
+      });
+      expect(getTransactionsSortOrder('user-1')).toBe('desc');
     });
   });
 
