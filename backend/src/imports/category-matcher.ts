@@ -29,6 +29,17 @@ export interface CategoryMatchInput {
   categoriesWithKeywords: { id: string; keywords: string[] }[];
 }
 
+export type CategoryMatchVia = 'exact_name' | 'keyword' | 'none';
+
+export interface CategoryMatchDetail {
+  categoryId: string | null;
+  via: CategoryMatchVia;
+  /** Normalized input used for matching (when non-empty). */
+  normalizedText?: string;
+  /** Winning keyword after normalization (keyword path only). */
+  matchedKeyword?: string;
+}
+
 /**
  * Match bank category or description to our category.
  * Uses: exact name match first, then keyword match (longest wins).
@@ -37,22 +48,50 @@ export function matchCategory(
   text: string,
   input: CategoryMatchInput,
 ): string | null {
+  return matchCategoryDetailed(text, input).categoryId;
+}
+
+/**
+ * Same as {@link matchCategory} but includes how the match was resolved (for logging).
+ */
+export function matchCategoryDetailed(
+  text: string,
+  input: CategoryMatchInput,
+): CategoryMatchDetail {
   const normalized = normalizeForMatch(text);
-  if (!normalized) return null;
+  if (!normalized) return { categoryId: null, via: 'none' };
 
-  // 1. Exact name match (our category names)
   const exactId = input.categoryByName.get(normalized);
-  if (exactId) return exactId;
+  if (exactId) {
+    return {
+      categoryId: exactId,
+      via: 'exact_name',
+      normalizedText: normalized,
+    };
+  }
 
-  // 2. Keyword match (normalized, longest wins)
-  return matchByKeywords(normalized, input.categoriesWithKeywords);
+  const kw = matchByKeywords(normalized, input.categoriesWithKeywords);
+  if (kw) {
+    return {
+      categoryId: kw.categoryId,
+      via: 'keyword',
+      normalizedText: normalized,
+      matchedKeyword: kw.matchedKeyword,
+    };
+  }
+
+  return { categoryId: null, via: 'none', normalizedText: normalized };
 }
 
 function matchByKeywords(
   normalizedText: string,
   categoriesWithKeywords: { id: string; keywords: string[] }[],
-): string | null {
-  let best: { categoryId: string; matchLen: number } | null = null;
+): { categoryId: string; matchedKeyword: string } | null {
+  let best: {
+    categoryId: string;
+    matchLen: number;
+    matchedKeyword: string;
+  } | null = null;
 
   for (const cat of categoriesWithKeywords) {
     for (const kw of cat.keywords) {
@@ -62,9 +101,15 @@ function matchByKeywords(
       const matches =
         normalizedText.includes(kwNorm) || kwNorm.includes(normalizedText);
       if (matches && (!best || kwNorm.length > best.matchLen)) {
-        best = { categoryId: cat.id, matchLen: kwNorm.length };
+        best = {
+          categoryId: cat.id,
+          matchLen: kwNorm.length,
+          matchedKeyword: kwNorm,
+        };
       }
     }
   }
-  return best?.categoryId ?? null;
+  return best
+    ? { categoryId: best.categoryId, matchedKeyword: best.matchedKeyword }
+    : null;
 }

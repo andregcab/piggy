@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { parse } from 'csv-parse/sync';
 
 export interface ParsedRow {
@@ -106,12 +107,21 @@ export function parseBankCsv(csvContent: string): ParsedRow[] {
   return result;
 }
 
-export function externalId(accountId: string, row: ParsedRow): string {
-  const str = `${accountId}|${row.date.toISOString().slice(0, 10)}|${row.description}|${row.amount}`;
-  let h = 0;
-  for (let i = 0; i < str.length; i++) {
-    h = (h << 5) - h + str.charCodeAt(i);
-    h |= 0;
-  }
-  return `ext-${Math.abs(h).toString(36)}`;
+/** Input string for {@link externalId} (includes CSV row index so identical lines differ). */
+export function importFingerprint(
+  accountId: string,
+  row: ParsedRow,
+  rowIndex: number,
+): string {
+  return `${accountId}|${row.date.toISOString().slice(0, 10)}|${row.description}|${row.amount}|${rowIndex}`;
+}
+
+/** Deterministic id per CSV row (SHA-256 of {@link importFingerprint}). */
+export function externalId(
+  accountId: string,
+  row: ParsedRow,
+  rowIndex: number,
+): string {
+  const str = importFingerprint(accountId, row, rowIndex);
+  return `ext-${createHash('sha256').update(str, 'utf8').digest('hex')}`;
 }

@@ -43,7 +43,7 @@ export function Import() {
       queryClient.invalidateQueries({ queryKey: ['imports'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
       toast.success(
-        `Imported ${data.imported} transaction(s)${data.skipped > 0 ? `, ${data.skipped} skipped (duplicates)` : ''}`,
+        `Imported ${data.imported} transaction(s)${data.skipped > 0 ? `, ${data.skipped} skipped (already present for this account)` : ''}`,
       );
     },
     onError: (err) => {
@@ -83,8 +83,10 @@ export function Import() {
     <div>
       <h1 className="text-2xl font-semibold">Import CSV</h1>
       <p className="text-muted-foreground mt-1">
-        Upload a bank CSV with Date, Description, and Amount columns.
-        Duplicates are skipped.
+        Upload a bank CSV with Date, Description, and Amount columns. Avoid
+        importing the same file twice—rows that already exist for this account
+        are skipped. Delete mistaken duplicates in the transaction list if
+        needed.
       </p>
       <Card className="mt-4">
         <CardHeader>

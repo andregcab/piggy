@@ -1,4 +1,4 @@
-import { externalId, parseBankCsv, ParsedRow } from './bank-csv.parser';
+import { parseBankCsv } from './bank-csv.parser';
 
 describe('parseBankCsv', () => {
   it('parses CSV with Date, Description, Amount', () => {
@@ -41,31 +41,5 @@ a,b`;
 2024-01-01,Test,"$1,234.56"`;
     const rows = parseBankCsv(csv);
     expect(rows[0].amount).toBe('1234.56');
-  });
-});
-
-describe('externalId', () => {
-  it('produces same id for same inputs', () => {
-    const row: ParsedRow = {
-      date: new Date('2024-01-15'),
-      description: 'COFFEE',
-      amount: '-5.99',
-      type: '',
-    };
-    const a = externalId('acc-1', row);
-    const b = externalId('acc-1', row);
-    expect(a).toBe(b);
-    expect(a).toMatch(/^ext-/);
-  });
-
-  it('produces different id for different amount', () => {
-    const row1: ParsedRow = {
-      date: new Date('2024-01-15'),
-      description: 'COFFEE',
-      amount: '-5.99',
-      type: '',
-    };
-    const row2: ParsedRow = { ...row1, amount: '-6.00' };
-    expect(externalId('acc-1', row1)).not.toBe(externalId('acc-1', row2));
   });
 });

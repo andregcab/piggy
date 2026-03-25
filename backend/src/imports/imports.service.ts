@@ -1,8 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CategoriesService } from '../categories/categories.service';
 import { externalId, parseBankCsv, ParsedRow } from './bank-csv.parser';
-import { matchCategory, type CategoryMatchInput } from './category-matcher';
+import {
+  matchCategoryDetailed,
+  type CategoryMatchInput,
+} from './category-matcher';
 
 export interface ImportResult {
   jobId: string;
@@ -92,22 +96,23 @@ export class ImportsService {
       null;
 
     try {
-      for (const row of rows) {
-        const extId = externalId(accountId, row);
-        const existing = await this.prisma.transaction.findUnique({
-          where: { accountId_externalId: { accountId, externalId: extId } },
-        });
-        if (existing) {
-          skipped++;
-          continue;
-        }
+      for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+        const row = rows[rowIndex];
+        const extId = externalId(accountId, row, rowIndex);
 
         let categoryId: string | null = null;
-        if (row.category) {
-          categoryId = matchCategory(row.category, matchInput);
-        }
-        if (!categoryId) {
-          categoryId = matchCategory(row.description, matchInput);
+        const bankDetail = row.category
+          ? matchCategoryDetailed(row.category, matchInput)
+          : null;
+        const descDetail = matchCategoryDetailed(row.description, matchInput);
+
+        // Prefer description keyword matches over the bank column (merchant keywords vs broad bank labels).
+        if (descDetail.via === 'keyword' && descDetail.categoryId) {
+          categoryId = descDetail.categoryId;
+        } else if (row.category && bankDetail?.categoryId) {
+          categoryId = bankDetail.categoryId;
+        } else if (descDetail.categoryId) {
+          categoryId = descDetail.categoryId;
         }
         if (!categoryId) categoryId = uncategorizedId;
 
@@ -127,8 +132,15 @@ export class ImportsService {
             },
           });
           imported++;
-        } catch {
-          errors++;
+        } catch (e) {
+          if (
+            e instanceof Prisma.PrismaClientKnownRequestError &&
+            e.code === 'P2002'
+          ) {
+            skipped++;
+          } else {
+            errors++;
+          }
         }
       }
 
