@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -35,9 +36,12 @@ export function CategoryDeleteDialog({
   onClose,
   deleteMutation,
 }: CategoryDeleteDialogProps) {
+  const [dialogContentEl, setDialogContentEl] =
+    useState<HTMLElement | null>(null);
+
   return (
     <Dialog open={target != null} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
+      <DialogContent ref={setDialogContentEl}>
         <DialogHeader>
           <DialogTitle>Delete &quot;{target?.name}&quot;</DialogTitle>
         </DialogHeader>
@@ -59,6 +63,7 @@ export function CategoryDeleteDialog({
                   onValueChange={(v) => onMigrateChange(v ?? '')}
                   placeholder="Select category (optional)"
                   searchPlaceholder="Type to search..."
+                  popoverPortalContainer={dialogContentEl}
                   allowEmpty
                   emptyOption={{
                     value: null,

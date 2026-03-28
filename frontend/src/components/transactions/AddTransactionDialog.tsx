@@ -57,6 +57,7 @@ function AddTransactionForm({
   defaultCategoryId,
   createMutation,
   onClose,
+  popoverPortalContainer,
 }: {
   accounts: Account[];
   categories: Category[];
@@ -64,6 +65,7 @@ function AddTransactionForm({
   defaultCategoryId: string | null;
   createMutation: AddTransactionMutation;
   onClose: () => void;
+  popoverPortalContainer: HTMLElement | null;
 }) {
   const [form, setForm] = useState(() => ({
     accountId: defaultAccountId || (accounts[0]?.id ?? ''),
@@ -156,6 +158,7 @@ function AddTransactionForm({
             }
             placeholder="Select account"
             searchPlaceholder="Type to search..."
+            popoverPortalContainer={popoverPortalContainer}
             triggerClassName={cn(
               'w-full',
               showValidation && !hasAccount && 'border-destructive',
@@ -290,6 +293,7 @@ function AddTransactionForm({
             }
             placeholder="Optional"
             searchPlaceholder="Type to search..."
+            popoverPortalContainer={popoverPortalContainer}
             allowEmpty
             emptyOption={{ value: null, label: '—' }}
             triggerClassName="w-full"
@@ -328,9 +332,12 @@ export function AddTransactionDialog({
   defaultCategoryId,
   createMutation,
 }: AddTransactionDialogProps) {
+  const [dialogContentEl, setDialogContentEl] =
+    useState<HTMLElement | null>(null);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent ref={setDialogContentEl} className="sm:max-w-md">
         {open ? (
           <AddTransactionForm
             accounts={accounts}
@@ -338,6 +345,7 @@ export function AddTransactionDialog({
             defaultAccountId={defaultAccountId}
             defaultCategoryId={defaultCategoryId}
             createMutation={createMutation}
+            popoverPortalContainer={dialogContentEl}
             onClose={() => onOpenChange(false)}
           />
         ) : null}

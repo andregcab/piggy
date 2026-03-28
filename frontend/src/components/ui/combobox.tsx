@@ -41,6 +41,12 @@ type ComboboxProps<T = string> = {
   ariaLabel?: string;
   /** When false, the search input inside the dropdown is hidden. Default true. */
   searchable?: boolean;
+  /**
+   * When set, the dropdown is portaled here instead of document.body.
+   * Required inside modal dialogs so trackpad/wheel scrolling works on the list
+   * (dialog scroll-lock only allows wheel on the dialog content subtree).
+   */
+  popoverPortalContainer?: HTMLElement | null;
 };
 
 export function Combobox<T extends string>({
@@ -58,6 +64,7 @@ export function Combobox<T extends string>({
   id,
   ariaLabel,
   searchable = true,
+  popoverPortalContainer,
 }: ComboboxProps<T>) {
   const [open, setOpen] = React.useState(false)
   const listboxId = React.useId()
@@ -86,7 +93,11 @@ export function Combobox<T extends string>({
           <ChevronDown className="h-4 w-4 shrink-0 opacity-50" aria-hidden />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className={cn("w-[var(--radix-popover-trigger-width)] p-0", className)} align="start">
+      <PopoverContent
+        container={popoverPortalContainer}
+        className={cn("w-[var(--radix-popover-trigger-width)] p-0", className)}
+        align="start"
+      >
         <Command>
           {searchable && <CommandInput placeholder={searchPlaceholder} />}
           <CommandList id={listboxId}>
