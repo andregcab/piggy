@@ -95,7 +95,10 @@ export function Combobox<T extends string>({
       </PopoverTrigger>
       <PopoverContent
         container={popoverPortalContainer}
-        className={cn("w-[var(--radix-popover-trigger-width)] p-0", className)}
+        className={cn(
+          "w-[var(--radix-popover-trigger-width)] p-1.5",
+          className,
+        )}
         align="start"
       >
         <Command>
