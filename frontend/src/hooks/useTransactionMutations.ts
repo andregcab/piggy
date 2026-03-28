@@ -32,21 +32,26 @@ export function useTransactionMutations() {
         amount?: number;
         myShare?: number | null;
       };
+      /** When true, list order / pagination may change; refetch transactions. */
+      dateChanged?: boolean;
     }) => updateTransaction(id, body),
-    onSuccess: (updated: TransactionRow) => {
-      // Update cache in place so list order is preserved (no refetch).
-      queryClient.setQueriesData<TransactionsResponse>(
-        { queryKey: ['transactions'] },
-        (old) => {
-          if (!old?.items) return old;
-          return {
-            ...old,
-            items: old.items.map((t) =>
-              t.id === updated.id ? updated : t,
-            ),
-          };
-        },
-      );
+    onSuccess: (updated: TransactionRow, variables) => {
+      if (variables.dateChanged) {
+        queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      } else {
+        queryClient.setQueriesData<TransactionsResponse>(
+          { queryKey: ['transactions'] },
+          (old) => {
+            if (!old?.items) return old;
+            return {
+              ...old,
+              items: old.items.map((t) =>
+                t.id === updated.id ? updated : t,
+              ),
+            };
+          },
+        );
+      }
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
     },
     onError: (err) => {

@@ -17,6 +17,7 @@ type UpdateMutation = UseMutationResult<
       amount?: number;
       myShare?: number | null;
     };
+    dateChanged?: boolean;
   },
   unknown
 >;
@@ -33,10 +34,13 @@ export function useTransactionEditState(
     null,
   );
   const [editNotes, setEditNotes] = useState('');
+  const [editOriginalDate, setEditOriginalDate] = useState('');
 
   const handleEditStart = (tx: TransactionRow) => {
     setEditId(tx.id);
-    setEditDate(tx.date.slice(0, 10));
+    const day = tx.date.slice(0, 10);
+    setEditDate(day);
+    setEditOriginalDate(day);
     setEditDescription(tx.description);
     setEditAmount(Math.abs(parseFloat(tx.amount)).toFixed(2));
     setEditType(parseFloat(tx.amount) < 0 ? 'debit' : 'credit');
@@ -61,6 +65,7 @@ export function useTransactionEditState(
             categoryId: editCategoryId,
             notes: editNotes.trim() || null,
           },
+          dateChanged: editDate !== editOriginalDate,
         },
         { onSuccess: () => setEditId(null) },
       );
