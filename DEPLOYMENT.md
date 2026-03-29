@@ -154,7 +154,7 @@ User=www-data
 WorkingDirectory=/path/to/budget-tracker/backend
 Environment=NODE_ENV=production
 EnvironmentFile=/path/to/budget-tracker/backend/.env
-ExecStart=/usr/bin/node dist/main.js
+ExecStart=/usr/bin/node dist/src/main.js
 Restart=on-failure
 
 [Install]
