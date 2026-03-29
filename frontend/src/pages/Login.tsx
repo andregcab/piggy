@@ -4,6 +4,7 @@ import { Info } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PasswordInput } from '@/components/ui/password-input';
 import { AuthPageLayout } from '@/components/AuthPageLayout';
 import { getAuthErrorMessage } from '@/lib/auth-errors';
 
@@ -102,9 +103,8 @@ export function Login() {
           >
             Password
           </label>
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="bg-muted"

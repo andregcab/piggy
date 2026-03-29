@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { PasswordInput } from '@/components/ui/password-input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { api } from '@/api/client';
@@ -66,9 +66,8 @@ export function ChangePasswordForm() {
     <form onSubmit={handleChangePassword} className="space-y-4">
       <div className="grid gap-2">
         <Label htmlFor="currentPassword">Current password</Label>
-        <Input
+        <PasswordInput
           id="currentPassword"
-          type="password"
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
           required
@@ -77,16 +76,17 @@ export function ChangePasswordForm() {
       </div>
       <div className="grid gap-2">
         <Label htmlFor="newPassword">New password</Label>
-        <Input
-            ref={newPasswordRef}
-            id="newPassword"
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-            autoComplete="new-password"
-            aria-invalid={!!passwordError}
-            aria-describedby={passwordError ? 'change-password-error' : undefined}
+        <PasswordInput
+          ref={newPasswordRef}
+          id="newPassword"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+          required
+          autoComplete="new-password"
+          aria-invalid={!!passwordError}
+          aria-describedby={
+            passwordError ? 'change-password-error' : undefined
+          }
         />
         <p className="text-xs text-muted-foreground">
           At least 8 characters, with one uppercase, one lowercase,
@@ -97,15 +97,16 @@ export function ChangePasswordForm() {
         <Label htmlFor="newPasswordConfirm">
           Confirm new password
         </Label>
-        <Input
+        <PasswordInput
           id="newPasswordConfirm"
-          type="password"
           value={newPasswordConfirm}
           onChange={(e) => setNewPasswordConfirm(e.target.value)}
           required
           autoComplete="new-password"
           aria-invalid={!!passwordError}
-          aria-describedby={passwordError ? 'change-password-error' : undefined}
+          aria-describedby={
+            passwordError ? 'change-password-error' : undefined
+          }
         />
       </div>
       {passwordError && (

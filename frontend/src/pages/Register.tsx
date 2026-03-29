@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PasswordInput } from '@/components/ui/password-input';
 import { AuthPageLayout } from '@/components/AuthPageLayout';
 import { getAuthErrorMessage } from '@/lib/auth-errors';
 import { cn } from '@/lib/utils';
@@ -147,10 +148,9 @@ export function Register() {
           >
             Password
           </label>
-          <Input
+          <PasswordInput
             ref={passwordRef}
             id="password"
-            type="password"
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
@@ -208,10 +208,9 @@ export function Register() {
           >
             Confirm password
           </label>
-          <Input
+          <PasswordInput
             ref={passwordConfirmRef}
             id="passwordConfirm"
-            type="password"
             value={passwordConfirm}
             onChange={(e) => {
               setPasswordConfirm(e.target.value);
