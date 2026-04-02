@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useLocalCalendarMonth } from '@/hooks/useLocalCalendarMonth';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { Card, CardContent } from '@/components/ui/card';
@@ -27,9 +28,7 @@ export function Dashboard() {
     setDashboardMonth,
     dashboardSelectionIsFromPreviousMonth,
   } = useUserPreferences();
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth() + 1;
+  const { year: currentYear, month: currentMonth } = useLocalCalendarMonth();
 
   const initial = getInitialMonth(
     { dashboardMonth, dashboardSelectionIsFromPreviousMonth },
