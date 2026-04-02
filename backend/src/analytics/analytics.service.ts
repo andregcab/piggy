@@ -92,14 +92,12 @@ export class AnalyticsService {
       }
     }
 
-    const hasActivity =
-      transactions.length > 0 ||
-      !!revenueOverride ||
-      additionalIncomes.length > 0;
-
+    // Base income always comes from the profile default unless this month has an override.
+    // (Do not require "activity" first: a new month with no transactions still shows default
+    // income in the UI, and expected fixed totals can make expenses non-zero.)
     const baseRevenue = revenueOverride
       ? Number(revenueOverride.amount)
-      : hasActivity && user?.monthlyIncome != null
+      : user?.monthlyIncome != null
         ? Number(user.monthlyIncome)
         : 0;
     const additionalTotal = additionalIncomes.reduce(
